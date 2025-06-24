@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: talin-bot
+    env: python
+    plan: free
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "python main.py"
+    runtime: python3.10
+    envVars:
+      - key: TOKEN
+        value: YOUR_BOT_TOKEN_HERE
