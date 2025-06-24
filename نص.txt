@@ -1,0 +1,39 @@
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandler, ContextTypes
+import os
+
+BOT_TOKEN = os.getenv("TOKEN")
+
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    name = update.effective_user.first_name or "صديقي"
+    text = f"""أهلاً {name} 👋
+يسعدني أكون مساعدك الرقمي 🧭  
+كلّمني في أي وقت أو استخدم الأزرار الجاهزة دي 👇"""
+
+    keyboard = [
+        [InlineKeyboardButton("📋 مهامي", callback_data="todo")],
+        [InlineKeyboardButton("🧠 اسألني", callback_data="ask")],
+        [InlineKeyboardButton("💬 اقتباس", callback_data="quote")]
+    ]
+    reply_markup = InlineKeyboardMarkup(keyboard)
+    await update.message.reply_text(text, reply_markup=reply_markup)
+
+async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    await query.answer()
+    
+    if query.data == "todo":
+        await query.message.reply_text("تمام! اكتبلي المهمة اللي حابب تضيفها ✍️")
+    elif query.data == "ask":
+        await query.message.reply_text("اسألني أي شيء، وهجاوبك بعقلي الاصطناعي 🧠")
+    elif query.data == "quote":
+        await query.message.reply_text("“ابدأ ولو بخطوة صغيرة، المهم تبدأ.” ✨")
+
+def main():
+    app = ApplicationBuilder().token(BOT_TOKEN).build()
+    app.add_handler(CommandHandler("start", start))
+    app.add_handler(CallbackQueryHandler(button_handler))
+    app.run_polling()
+
+if __name__ == "__main__":
+    main()
